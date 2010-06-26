@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.codan.core.checkers">
+	     <checker
+	           class="net.omnialabs.cdt.codan.checkers.NameResolutionChecker"
+	           id="org.eclipse.cdt.codan.checkers.NameResolutionChecker"
+	           name="Name Resolution Checker">
+	        <problem
+	              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+	              defaultEnabled="true"
+	              defaultSeverity="Error"
+	              description="Name resolution problem found by the indexer"
+	              id="org.eclipse.cdt.codan.internal.checkers.NameResolutionChecker"
+	              messagePattern="{0}"
+	              name="Name Resolution Problem">
+	        </problem>
+	     </checker>
+	     <checker
+	           class="net.omnialabs.cdt.codan.checkers.ClassMemberAccessChecker"
+	           id="org.eclipse.cdt.codan.checkers.ClassMemberAccessChecker"
+	           name="Member Access Checker">
+	        <problem
+	              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+	              defaultEnabled="false"
+	              defaultSeverity="Error"
+	              description="Member Access Problem"
+	              id="org.eclipse.cdt.codan.internal.checkers.ClassMemberAccessChecker"
+	              messagePattern="{0}"
+	              name="Member Access Problem">
+	        </problem>
+	     </checker>
+	     <checker
+            class="net.omnialabs.cdt.codan.checkers.ReturnParentheses"
+            id="codantest.return.parentheses"
+            name="Return with parentheses">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               id="codantest.returnparentheses"
+               messagePattern="Missing parentheses in return statement"
+               name="Return with parentheses">
+         </problem>
+      </checker>
+   </extension>
+
+</plugin>

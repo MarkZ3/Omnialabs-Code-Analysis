@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Omnialabs Codan
+Bundle-SymbolicName: net.omnialabs.cdt.codan;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Omnialabs
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.cdt.codan.core;bundle-version="1.0.0",
+ org.eclipse.cdt.core;bundle-version="5.2.0",
+ org.eclipse.cdt.codan.core.cxx;bundle-version="1.0.0",
+ org.eclipse.core.resources;bundle-version="3.6.0",
+ org.eclipse.core.runtime;bundle-version="3.6.0"
