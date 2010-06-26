@@ -127,7 +127,7 @@ public class ClassMemberAccessChecker extends AbstractIndexAstChecker {
 				IBinding binding = aCompositeNode.getName().getBinding();
 				if(binding instanceof ICPPClassType) {
 					ICPPClassType classType = (ICPPClassType)binding;
-					if(classType.toString().equals(classOwner.toString()))
+					if(classType.getName().equals(classOwner.getName()))
 						return true;
 				}
 			}
@@ -155,7 +155,7 @@ public class ClassMemberAccessChecker extends AbstractIndexAstChecker {
 						IBinding binding = nameInQualified.getBinding();
 						if(binding instanceof ICPPClassType) {
 							ICPPClassType classType = (ICPPClassType)binding;
-							if(classType.toString().equals(classOwner.toString())) {
+							if(classType.getName().equals(classOwner.getName())) {
 								return true;
 							}
 							if(isFriend(classOwner, classType)) {
@@ -252,7 +252,7 @@ public class ClassMemberAccessChecker extends AbstractIndexAstChecker {
 			IBinding baseClassBinding = base.getBaseClass();
 			if(baseClassBinding instanceof ICPPClassType) {
 				ICPPClassType baseClassType = (ICPPClassType)baseClassBinding;
-				if (baseClassType.toString().equals(classOwner.toString()) && 
+				if (baseClassType.getName().equals(classOwner.getName()) && 
 						(base.getVisibility() == ICPPASTVisibilityLabel.v_protected || 
 								base.getVisibility() == ICPPASTVisibilityLabel.v_public )) {
 					return true;
@@ -270,7 +270,7 @@ public class ClassMemberAccessChecker extends AbstractIndexAstChecker {
 		for(IBinding friendBinding : friendBindings) {
 			if(friendBinding instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType)friendBinding;
-				if(classType.toString().equals(otherClass.toString()))
+				if(classType.getName().equals(otherClass.getName()))
 					return true;
 			}
 		}
