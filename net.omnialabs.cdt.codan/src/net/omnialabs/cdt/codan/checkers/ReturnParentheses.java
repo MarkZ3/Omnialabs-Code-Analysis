@@ -26,8 +26,13 @@ public class ReturnParentheses extends AbstractIndexAstChecker {
 				if (statement instanceof IASTReturnStatement) {
 					
 					String rawSig = statement.getRawSignature();
-					if(!(new String(rawSig).matches("return(\\(.+\\))?;"))) {
-						reportProblem(ERR_ID, statement, (Object)statement.getRawSignature());
+					
+					// It could be a macro, we don't handle this 
+					if(rawSig.contains("return"))
+					{
+						if(!(new String(rawSig).matches("return\\s*(\\(\\s*.+\\s*\\))?\\s*;"))) {
+							reportProblem(ERR_ID, statement, (Object)statement.getRawSignature());
+						}	
 					}
 				}
 				return PROCESS_CONTINUE;
