@@ -43,6 +43,17 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 							reportProblem(ERR_ID, name, "Invalid redeclaration of " + name.getRawSignature());
 							return PROCESS_CONTINUE;
 						}
+						
+						if(id == IProblemBinding.SEMANTIC_INVALID_REDEFINITION) {
+							reportProblem(ERR_ID, name, "Invalid redefinition of " + name.getRawSignature());
+							return PROCESS_CONTINUE;
+						}
+						
+						if(id == IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP) {
+							reportProblem(ERR_ID, name, name.getRawSignature() + " is ambigious");
+							return PROCESS_CONTINUE;
+						}
+						
 						IASTNode parentNode = name.getParent();
 						if(parentNode instanceof IASTIdExpression) {
 							IASTIdExpression expression = (IASTIdExpression)parentNode;
