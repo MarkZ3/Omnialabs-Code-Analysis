@@ -139,16 +139,11 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 		String lastSignature = "";
 		for(IBinding candidateBinding : problemBinding.getCandidateBindings()) {
 			if(candidateBinding instanceof ICPPFunction) {
-				try {
-					ICPPFunction functionBinding = (ICPPFunction)candidateBinding;
-					String signature = getFunctionSignature(functionBinding);
-					if(!signature.equals(lastSignature)) {
-						problemString += signature + "\n";
-						lastSignature = signature;
-					}
-				} catch (DOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				ICPPFunction functionBinding = (ICPPFunction)candidateBinding;
+				String signature = getFunctionSignature(functionBinding);
+				if(!signature.equals(lastSignature)) {
+					problemString += signature + "\n";
+					lastSignature = signature;
 				}
 			} else if(candidateBinding instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType)candidateBinding;
