@@ -5,14 +5,14 @@
          point="org.eclipse.cdt.codan.core.checkers">
 	     <checker
 	           class="net.omnialabs.cdt.codan.checkers.NameResolutionChecker"
-	           id="org.eclipse.cdt.codan.checkers.NameResolutionChecker"
+	           id="net.omnialabs.cdt.codan.checkers.NameResolutionChecker"
 	           name="Name Resolution Checker">
 	        <problem
 	              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
 	              defaultEnabled="true"
 	              defaultSeverity="Error"
 	              description="Name resolution problem found by the indexer"
-	              id="org.eclipse.cdt.codan.internal.checkers.NameResolutionChecker"
+	              id="net.omnialabs.cdt.codan.internal.checkers.NameResolutionChecker"
 	              messagePattern="{0}"
 	              name="Name Resolution Problem">
 	        </problem>
