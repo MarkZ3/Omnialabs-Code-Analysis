@@ -30,7 +30,7 @@ public class ReturnParentheses extends AbstractIndexAstChecker {
 					// It could be a macro, we don't handle this 
 					if(rawSig.contains("return"))
 					{
-						if(!(new String(rawSig).matches("return\\s*(\\(\\s*.+\\s*\\))?\\s*;"))) {
+						if(!(new String(rawSig).matches("return\\s*(\\((\\s*.+\\s*)*\\))?\\s*;"))) {
 							reportProblem(ERR_ID, statement, (Object)statement.getRawSignature());
 						}	
 					}
