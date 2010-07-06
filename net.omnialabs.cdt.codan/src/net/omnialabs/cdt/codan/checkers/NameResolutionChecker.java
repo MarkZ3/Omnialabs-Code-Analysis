@@ -1,4 +1,3 @@
-package net.omnialabs.cdt.codan.checkers;
 /*******************************************************************************
  * Copyright (c) 2010 Marc-Andre Laperle and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,12 +8,13 @@ package net.omnialabs.cdt.codan.checkers;
  * Contributors:
  * Marc-Andre Laperle - Initial API and implementation
  *******************************************************************************/
-
+package net.omnialabs.cdt.codan.checkers;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.osgi.util.NLS;
 
 public class NameResolutionChecker extends AbstractIndexAstChecker {
 
@@ -63,41 +64,45 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 							int id = problemBinding.getID();
 							
 							if(id == IProblemBinding.SEMANTIC_INVALID_OVERLOAD) {
-								reportProblem(ERR_ID, name, "Invalid overload of " + name.getRawSignature());
+								reportProblem(ERR_ID, name, NLS.bind(Messages.NameResolutionChecker_OverloadProblem, name.getRawSignature()));
 								return PROCESS_CONTINUE;
 							}
 							
-							// For some reason, objects with bad field references are flaged with AMBIGUOUS_LOOKUP 
-							boolean notAFieldReferenceOwner = parentNode != null && !parentNode.getPropertyInParent().getName().contains("FIELD_OWNER");
-							if(id == IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP && notAFieldReferenceOwner) {
-								String errorString = name.getRawSignature() + " is ambigious. ";
+							if(id == IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP) {
+								String errorString = NLS.bind(Messages.NameResolutionChecker_AmbiguousProblem, name.getRawSignature());
 								errorString += getCandidatesString(problemBinding);
 								reportProblem(ERR_ID, name, errorString);
 								return PROCESS_CONTINUE;
 							}
 							
 							if(id == IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE) {
-								reportProblem(ERR_ID, name, "Circular inheritance encountered in " + name.getRawSignature());
+								if(parentNode instanceof IASTFieldReference) {
+									IASTExpression ownerExpression = ((IASTFieldReference)parentNode).getFieldOwner();
+									String typeString = ASTTypeUtil.getType(ownerExpression.getExpressionType());
+									reportProblem(ERR_ID, ownerExpression, NLS.bind(Messages.NameResolutionChecker_CircularReferenceProblem, typeString));
+								} else {
+									reportProblem(ERR_ID, name, NLS.bind(Messages.NameResolutionChecker_CircularReferenceProblem, name.getRawSignature()));	
+								}
 								return PROCESS_CONTINUE;
 							}
 							
 							if(id == IProblemBinding.SEMANTIC_INVALID_REDECLARATION) {
-								reportProblem(ERR_ID, name, "Invalid redeclaration of " + name.getRawSignature());
+								reportProblem(ERR_ID, name, NLS.bind(Messages.NameResolutionChecker_RedeclarationProblem, name.getRawSignature()));
 								return PROCESS_CONTINUE;
 							}
 							
 							if(id == IProblemBinding.SEMANTIC_INVALID_REDEFINITION) {
-								reportProblem(ERR_ID, name, "Invalid redefinition of " + name.getRawSignature());
+								reportProblem(ERR_ID, name, NLS.bind(Messages.NameResolutionChecker_RedefinitionProblem, name.getRawSignature()));
 								return PROCESS_CONTINUE;
 							}
 							
 							if(id == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
-								reportProblem(ERR_ID, name, "Member declaration not found.");
+								reportProblem(ERR_ID, name, Messages.NameResolutionChecker_MemberDeclarationNotFoundProblem);
 								return PROCESS_CONTINUE;
 							}
 							
 							if(id == IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND) {
-								reportProblem(ERR_ID, name, name.getRawSignature() + " : label not found.");
+								reportProblem(ERR_ID, name, NLS.bind(Messages.NameResolutionChecker_LabelStatementNotFoundProblem, name.getRawSignature()));
 								return PROCESS_CONTINUE;
 							}
 							
@@ -105,7 +110,7 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 								// We use the templateName since we don't want the whole
 								// argument list to be underligned. That way we can see which argument is invalid.
 								IASTNode templateName = getTemplateName(name);
-								reportProblem(ERR_ID, templateName, "Invalid template arguments.");
+								reportProblem(ERR_ID, templateName, Messages.NameResolutionChecker_InvalidTemplateArgumentsProblem);
 								return PROCESS_CONTINUE;
 							}
 							
@@ -120,7 +125,7 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 							} else if (parentNode instanceof IASTFieldReference) {
 								handleMemberProblem(name, parentNode, problemBinding);
 							} else if (parentNode instanceof IASTNamedTypeSpecifier) {
-								reportProblem(ERR_ID, name, name.getRawSignature() + " type could not be resolved");
+								reportProblem(ERR_ID, name, NLS.bind(Messages.NameResolutionChecker_TypeResolutionProblem, name.getRawSignature()));
 							} 
 							// Probably a variable
 							else {
@@ -144,9 +149,9 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 	private void handleFunctionProblem(IASTName name, IProblemBinding problemBinding)
 			throws DOMException {
 		if(problemBinding.getCandidateBindings().length == 0) {
-			reportProblem(ERR_ID, name.getLastName(), name.getRawSignature()+": function could not be resolved");
+			reportProblem(ERR_ID, name.getLastName(), NLS.bind(Messages.NameResolutionChecker_FunctionResolutionProblem, name.getRawSignature()));
 		} else {
-			String problemString = "Invalid arguments. ";
+			String problemString = Messages.NameResolutionChecker_InvalidArguments;
 			problemString += getCandidatesString(problemBinding);
 			reportProblem(ERR_ID, name.getLastName(), problemString);
 		}
@@ -157,25 +162,26 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 		IASTNode parentParentNode = parentNode.getParent();
 		if(parentParentNode instanceof IASTFunctionCallExpression) {
 			if(problemBinding.getCandidateBindings().length == 0) {
-				reportProblem(ERR_ID, name.getLastName(), name.getRawSignature()+": method could not be resolved");
+				reportProblem(ERR_ID, name.getLastName(), NLS.bind(Messages.NameResolutionChecker_MethodResolutionProblem, name.getRawSignature()));
 			} else {
-				String problemString = "Invalid arguments. " + getCandidatesString(problemBinding);
+				String problemString = Messages.NameResolutionChecker_InvalidArguments + getCandidatesString(problemBinding);
 				reportProblem(ERR_ID, name.getLastName(), problemString);
 			}
 		} else {
-			reportProblem(ERR_ID, name.getLastName(), name.getRawSignature()+": field could not be resolved");
+			reportProblem(ERR_ID, name.getLastName(), NLS.bind(Messages.NameResolutionChecker_FieldResolutionProblem, name.getRawSignature()));
 		}
 	}
 
 	private void handleVariableProblem(IASTName name) {
-		reportProblem(ERR_ID, name, name.getRawSignature() + " could not be resolved");
+		reportProblem(ERR_ID, name, NLS.bind(Messages.NameResolutionChecker_VariableResolutionProblem, name.getRawSignature()));
 	}
 	
 	private boolean isFunctionCall(IASTNode parentNode) {
 		if(parentNode instanceof IASTIdExpression) {
 			IASTIdExpression expression = (IASTIdExpression)parentNode;
 			IASTNode parentParentNode = expression.getParent();
-			if(parentParentNode instanceof IASTFunctionCallExpression && expression.getPropertyInParent().getName().contains("FUNCTION_NAME")) {
+			if(parentParentNode instanceof IASTFunctionCallExpression && 
+					expression.getPropertyInParent().getName().equals(IASTFunctionCallExpression.FUNCTION_NAME.getName())) {
 				return true;
 			}
 		}
@@ -191,15 +197,22 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 		return nameToGetTempate;
 	}
 
+	/**
+	 * Returns a string of the candidates for the binding
+	 * 
+	 * @param problemBinding
+	 * @return A string of the candidates, one per line
+	 * @throws DOMException
+	 */
 	private String getCandidatesString(IProblemBinding problemBinding) throws DOMException {
-		String candidatesString = "Candidates are :\n";
-		String lastSignature = "";
+		String candidatesString = Messages.NameResolutionChecker_Candidates + "\n"; //$NON-NLS-1$
+		String lastSignature = ""; //$NON-NLS-1$
 		for(IBinding candidateBinding : problemBinding.getCandidateBindings()) {
 			if(candidateBinding instanceof ICPPFunction) {
 				ICPPFunction functionBinding = (ICPPFunction)candidateBinding;
 				String signature = getFunctionSignature(functionBinding);
 				if(!signature.equals(lastSignature)) {
-					candidatesString += signature + "\n";
+					candidatesString += signature + "\n"; //$NON-NLS-1$
 					lastSignature = signature;
 				}
 			} else if(candidateBinding instanceof ICPPClassType) {
@@ -207,7 +220,7 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 				for(ICPPFunction constructor : classType.getConstructors()) {
 					String signature = getFunctionSignature(constructor);
 					if(!signature.equals(lastSignature)) {
-						candidatesString += signature + "\n";
+						candidatesString += signature + "\n"; //$NON-NLS-1$
 						lastSignature = signature;
 					}
 				}
@@ -217,9 +230,16 @@ public class NameResolutionChecker extends AbstractIndexAstChecker {
 		return candidatesString;
 	}
 	
+	/**
+	 * Returns a string of the function signature : returntype + function + parameters
+	 * 
+	 * @param functionBinding The function to get the signature
+	 * @return A string of the function signature
+	 * @throws DOMException
+	 */
 	private String getFunctionSignature(ICPPFunction functionBinding) throws DOMException {
 		IFunctionType functionType = functionBinding.getType();
-		String returnTypeString = ASTTypeUtil.getType(functionBinding.getType().getReturnType())+" ";
+		String returnTypeString = ASTTypeUtil.getType(functionBinding.getType().getReturnType()) + " "; //$NON-NLS-1$
 		String functionName = functionBinding.getName();
 		String parameterTypeString = ASTTypeUtil.getParameterTypeString(functionType);
 		return returnTypeString + functionName + parameterTypeString;

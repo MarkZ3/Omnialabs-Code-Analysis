@@ -28,7 +28,7 @@ public class ReturnParentheses extends AbstractIndexAstChecker {
 					String rawSig = statement.getRawSignature();
 					
 					// It could be a macro, we don't handle this 
-					if(rawSig.contains("return"))
+					if(rawSig.contains("return")) //$NON-NLS-1$
 					{
 						if(!(new String(rawSig).matches("return\\s*(\\((\\s*.+\\s*)*\\))?\\s*;"))) {
 							reportProblem(ERR_ID, statement, (Object)statement.getRawSignature());
