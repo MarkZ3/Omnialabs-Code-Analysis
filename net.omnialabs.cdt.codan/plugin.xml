@@ -4,20 +4,6 @@
    <extension
          point="org.eclipse.cdt.codan.core.checkers">
 	     <checker
-	           class="net.omnialabs.cdt.codan.checkers.NameResolutionChecker"
-	           id="net.omnialabs.cdt.codan.checkers.NameResolutionChecker"
-	           name="Name Resolution Checker">
-	        <problem
-	              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
-	              defaultEnabled="true"
-	              defaultSeverity="Error"
-	              description="Name resolution problem found by the indexer"
-	              id="net.omnialabs.cdt.codan.internal.checkers.NameResolutionChecker"
-	              messagePattern="{0}"
-	              name="Name Resolution Problem">
-	        </problem>
-	     </checker>
-	     <checker
 	           class="net.omnialabs.cdt.codan.checkers.ClassMemberAccessChecker"
 	           id="org.eclipse.cdt.codan.checkers.ClassMemberAccessChecker"
 	           name="Member Access Checker">
@@ -29,6 +15,43 @@
 	              id="org.eclipse.cdt.codan.internal.checkers.ClassMemberAccessChecker"
 	              messagePattern="{0}"
 	              name="Member Access Problem">
+	        </problem>
+	     </checker>
+	     <checker
+	           class="net.omnialabs.cdt.codan.checkers.MemberUsageChecker"
+	           id="org.eclipse.cdt.codan.checkers.MemberUsageChecker"
+	           name="Member Usage Problem">
+	        <problem
+	              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+	              defaultEnabled="false"
+	              defaultSeverity="Warning"
+	              description="Field never used"
+	              id="org.eclipse.cdt.codan.internal.checkers.MethodUsageProblem"
+	              messagePattern="The method {0} from the type {1} is never used locally"
+	              name="Field never used">
+	        </problem>
+	        <problem
+	              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+	              defaultEnabled="false"
+	              defaultSeverity="Warning"
+	              description="Method never used"
+	              id="org.eclipse.cdt.codan.internal.checkers.FieldUsageProblem"
+	              messagePattern="The field {0} from the type {1} is never read locally"
+	              name="Method never used">
+	        </problem>
+	     </checker>
+	     <checker
+	           class="net.omnialabs.cdt.codan.checkers.LocalVariableUsageChecker"
+	           id="org.eclipse.cdt.codan.checkers.LocalVariableUsageChecke"
+	           name="Local Variable Usage Problem">
+	        <problem
+	              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+	              defaultEnabled="false"
+	              defaultSeverity="Warning"
+	              description="Local Variable Usage Problem"
+	              id="org.eclipse.cdt.codan.internal.checkers.LocalVariableUsageProblem"
+	              messagePattern="The local variable {0} is never read"
+	              name="Local variable never read">
 	        </problem>
 	     </checker>
 	     <checker
