@@ -42,7 +42,7 @@
 	     </checker>
 	     <checker
 	           class="net.omnialabs.cdt.codan.checkers.LocalVariableUsageChecker"
-	           id="org.eclipse.cdt.codan.checkers.LocalVariableUsageChecke"
+	           id="org.eclipse.cdt.codan.checkers.LocalVariableUsageChecker"
 	           name="Local Variable Usage Problem">
 	        <problem
 	              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
@@ -55,16 +55,16 @@
 	        </problem>
 	     </checker>
 	     <checker
-            class="net.omnialabs.cdt.codan.checkers.ReturnParentheses"
-            id="codantest.return.parentheses"
-            name="Return with parentheses">
+            class="net.omnialabs.cdt.codan.checkers.ReturnStyleChecker"
+            id="org.eclipse.cdt.codan.checkers.returnstyle"
+            name="Return style">
          <problem
                category="org.eclipse.cdt.codan.core.categories.CodeStyle"
                defaultEnabled="false"
                defaultSeverity="Warning"
-               id="codantest.returnparentheses"
-               messagePattern="Missing parentheses in return statement"
-               name="Return with parentheses">
+               id="org.eclipse.cdt.codan.internal.checkers.returnstyle"
+               messagePattern="Return statement has invalid style "
+               name="Return Style">
          </problem>
       </checker>
    </extension>

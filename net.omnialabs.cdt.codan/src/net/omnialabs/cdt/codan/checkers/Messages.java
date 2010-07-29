@@ -9,6 +9,8 @@ public class Messages extends NLS {
 	public static String MemberUsageChecker_PrefProtected;
 	public static String MemberUsageChecker_PrefPublic;
 	
+	public static String ReturnStyleChecker_Regex;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
