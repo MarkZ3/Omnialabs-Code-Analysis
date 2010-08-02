@@ -8,6 +8,8 @@ public class Messages extends NLS {
 	public static String MemberUsageChecker_PrefPrivate;
 	public static String MemberUsageChecker_PrefProtected;
 	public static String MemberUsageChecker_PrefPublic;
+	public static String MemberUsageChecker_PrefPrivateContructors;
+	public static String MemberUsageChecker_PrefPrivateOverloadedOperators;
 	
 	public static String ReturnStyleChecker_Regex;
 	

@@ -27,7 +27,7 @@
 	              defaultSeverity="Warning"
 	              description="Field never used"
 	              id="org.eclipse.cdt.codan.internal.checkers.MethodUsageProblem"
-	              messagePattern="The method {0} from the type {1} is never used locally"
+	              messagePattern="The method {0} from the type {1} is never used"
 	              name="Field never used">
 	        </problem>
 	        <problem
@@ -36,7 +36,7 @@
 	              defaultSeverity="Warning"
 	              description="Method never used"
 	              id="org.eclipse.cdt.codan.internal.checkers.FieldUsageProblem"
-	              messagePattern="The field {0} from the type {1} is never read locally"
+	              messagePattern="The field {0} from the type {1} is never read"
 	              name="Method never used">
 	        </problem>
 	     </checker>

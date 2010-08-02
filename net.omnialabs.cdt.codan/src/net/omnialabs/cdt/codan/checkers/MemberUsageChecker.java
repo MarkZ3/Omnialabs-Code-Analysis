@@ -8,7 +8,9 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -23,6 +25,8 @@ public class MemberUsageChecker extends AbstractIndexAstChecker {
 	final private String PREF_PRIVATE = "private"; //$NON-NLS-1$
 	final private String PREF_PROTECTED = "protected"; //$NON-NLS-1$
 	final private String PREF_PUBLIC = "public"; //$NON-NLS-1$
+	final private String PREF_PRIVATE_CONSTRUCTORS = "private_constructors"; //$NON-NLS-1$
+	final private String PREF_PRIVATE_OVERLOADED_OPERATORS = "private_overloaded_operators"; //$NON-NLS-1$
 	
 	@Override
 	public void processAst(IASTTranslationUnit ast) {
@@ -44,7 +48,7 @@ public class MemberUsageChecker extends AbstractIndexAstChecker {
 						if(member instanceof ICPPMethod) {
 							ICPPMethod method = (ICPPMethod) member;
 							if(method.isDestructor())
-								return super.visit(name);
+								return PROCESS_SKIP;
 						}
 						
 						try {
@@ -53,7 +57,16 @@ public class MemberUsageChecker extends AbstractIndexAstChecker {
 							if(visibility == ICPPMember.v_private && checkPref(problemId, PREF_PRIVATE) ||
 									visibility == ICPPMember.v_protected && checkPref(problemId, PREF_PROTECTED) ||
 									visibility == ICPPMember.v_public && checkPref(problemId, PREF_PUBLIC)) {
-								if(hasReferences(index, binding)) {
+								
+								if(!checkPref(problemId, PREF_PRIVATE_CONSTRUCTORS)  && member instanceof ICPPConstructor && visibility == ICPPMember.v_private) {
+									return PROCESS_SKIP;
+								}
+								
+								if(!checkPref(problemId, PREF_PRIVATE_OVERLOADED_OPERATORS)  && name instanceof ICPPASTOperatorName && visibility == ICPPMember.v_private) {
+									return PROCESS_SKIP;
+								}
+								
+								if(!hasReferences(index, binding)) {
 									ICPPClassType classType = member.getClassOwner();
 									if(member instanceof ICPPMethod) {
 										reportProblem(ID_METHOD, name, member.toString(), classType.toString());	
@@ -66,10 +79,10 @@ public class MemberUsageChecker extends AbstractIndexAstChecker {
 						}
 
 					}
-					return super.visit(name);
+					return PROCESS_CONTINUE;
 				}
 			});
-		} catch (Exception e) {
+		} catch (InterruptedException e) {
 		} finally {
 			index.releaseReadLock();	
 		}
@@ -79,10 +92,11 @@ public class MemberUsageChecker extends AbstractIndexAstChecker {
 	private boolean hasReferences(final IIndex index, IBinding binding) {
 		boolean hasReferences = false;
 		try {
+			//TODO: improve this algorithm, it does not reflect the number of results in call hierarchy
 			IIndexName[] names = index.findReferences(binding);
-			hasReferences = names.length == 0;
+			hasReferences = names.length != 0;
 		} catch (CoreException e) {
-			hasReferences = false;
+			hasReferences = true;
 		}
 		return hasReferences;
 	}
@@ -101,6 +115,10 @@ public class MemberUsageChecker extends AbstractIndexAstChecker {
 				Messages.MemberUsageChecker_PrefProtected, Boolean.FALSE);
 		addPreference(problem, PREF_PUBLIC,
 				Messages.MemberUsageChecker_PrefPublic, Boolean.FALSE);
+		addPreference(problem, PREF_PRIVATE_CONSTRUCTORS,
+				Messages.MemberUsageChecker_PrefPrivateContructors, Boolean.FALSE);
+		addPreference(problem, PREF_PRIVATE_OVERLOADED_OPERATORS,
+				Messages.MemberUsageChecker_PrefPrivateOverloadedOperators, Boolean.FALSE);
 	}
 	
 	
