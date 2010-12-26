@@ -40,11 +40,7 @@ public class ClassMemberAccessChecker extends AbstractIndexAstChecker {
 						
 					ICPPMember member = (ICPPMember) name.getBinding();
 					int visibility;
-					try {
-						visibility = member.getVisibility();
-					} catch (DOMException e) {
-						return PROCESS_CONTINUE;
-					}
+					visibility = member.getVisibility();
 
 					if (visibility == ICPPASTVisibilityLabel.v_private) {
 						if (!isValidPrivateInFriendClass(name, member))

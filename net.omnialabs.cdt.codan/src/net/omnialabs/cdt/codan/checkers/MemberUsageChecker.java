@@ -51,31 +51,28 @@ public class MemberUsageChecker extends AbstractIndexAstChecker {
 								return PROCESS_SKIP;
 						}
 						
-						try {
-							String problemId = member instanceof ICPPField ? ID_FIELD : ID_METHOD;
-							int visibility = member.getVisibility();
-							if(visibility == ICPPMember.v_private && checkPref(problemId, PREF_PRIVATE) ||
-									visibility == ICPPMember.v_protected && checkPref(problemId, PREF_PROTECTED) ||
-									visibility == ICPPMember.v_public && checkPref(problemId, PREF_PUBLIC)) {
-								
-								if(!checkPref(problemId, PREF_PRIVATE_CONSTRUCTORS)  && member instanceof ICPPConstructor && visibility == ICPPMember.v_private) {
-									return PROCESS_SKIP;
-								}
-								
-								if(!checkPref(problemId, PREF_PRIVATE_OVERLOADED_OPERATORS)  && name instanceof ICPPASTOperatorName && visibility == ICPPMember.v_private) {
-									return PROCESS_SKIP;
-								}
-								
-								if(!hasReferences(index, binding)) {
-									ICPPClassType classType = member.getClassOwner();
-									if(member instanceof ICPPMethod) {
-										reportProblem(ID_METHOD, name, member.toString(), classType.toString());	
-									} else {
-										reportProblem(ID_FIELD, name, member.toString(), classType.toString());
-									}
+						String problemId = member instanceof ICPPField ? ID_FIELD : ID_METHOD;
+						int visibility = member.getVisibility();
+						if(visibility == ICPPMember.v_private && checkPref(problemId, PREF_PRIVATE) ||
+								visibility == ICPPMember.v_protected && checkPref(problemId, PREF_PROTECTED) ||
+								visibility == ICPPMember.v_public && checkPref(problemId, PREF_PUBLIC)) {
+							
+							if(!checkPref(problemId, PREF_PRIVATE_CONSTRUCTORS)  && member instanceof ICPPConstructor && visibility == ICPPMember.v_private) {
+								return PROCESS_SKIP;
+							}
+							
+							if(!checkPref(problemId, PREF_PRIVATE_OVERLOADED_OPERATORS)  && name instanceof ICPPASTOperatorName && visibility == ICPPMember.v_private) {
+								return PROCESS_SKIP;
+							}
+							
+							if(!hasReferences(index, binding)) {
+								ICPPClassType classType = member.getClassOwner();
+								if(member instanceof ICPPMethod) {
+									reportProblem(ID_METHOD, name, member.toString(), classType.toString());	
+								} else {
+									reportProblem(ID_FIELD, name, member.toString(), classType.toString());
 								}
 							}
-						} catch (DOMException e1) {
 						}
 
 					}
